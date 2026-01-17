@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard สมาคมโลหะไทย 2568</title>
+    
+    <!-- 1. React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 2. Prop-types -->
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    
+    <!-- 3. Recharts -->
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    
+    <!-- 4. Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- 5. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+        const { 
+            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+            PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart 
+        } = window.Recharts;
+
+        // --- Icon Components ---
+        const Icon = ({ children, className, size = 24, ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                {children}
+            </svg>
+        );
+        const Wallet = (props) => <Icon {...props}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></Icon>;
+        const TrendingUp = (props) => <Icon {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></Icon>;
+        const TrendingDown = (props) => <Icon {...props}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></Icon>;
+        const Filter = (props) => <Icon {...props}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
+        const BarChart2 = (props) => <Icon {...props}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></Icon>;
+        const Activity = (props) => <Icon {...props}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
+        const MousePointerClick = (props) => <Icon {...props}><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></Icon>;
+        const CheckSquare = (props) => <Icon {...props}><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></Icon>;
+        const Square = (props) => <Icon {...props}><rect width="18" height="18" x="3" y="3" rx="2"/></Icon>;
+        const Layers = (props) => <Icon {...props}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></Icon>;
+        const GitMerge = (props) => <Icon {...props}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></Icon>;
+        const ZoomIn = (props) => <Icon {...props}><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></Icon>;
+        const XIcon = (props) => <Icon {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
+        const Landmark = (props) => <Icon {...props}><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></Icon>;
+        const Coins = (props) => <Icon {...props}><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></Icon>;
+        const Calculator = (props) => <Icon {...props}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></Icon>;
+        const Eye = (props) => <Icon {...props}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></Icon>;
+
+        // --- CONSTANTS ---
+        const INITIAL_BALANCE_2568 = 2043315.93;
+
+        // --- DATA SECTION ---
+        
+        const rawData = [
+            // --- รายรับ 2568 (Preserved) ---
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ม.ค.', amount: 193771.50 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'ม.ค.', amount: 190000.00 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ก.พ.', amount: 247000.00 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'ก.พ.', amount: 80000.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ก.พ.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'ส่วนลดโฮมโปรของรางวัล', month: 'ก.พ.', amount: 1250.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'มี.ค.', amount: 1150.83 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'เม.ย.', amount: 12888.70 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'เม.ย.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'พ.ค.', amount: 5000.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'พ.ค.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'มิ.ย.', amount: 1560000.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'มิ.ย.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'ดอกเบี้ยเงินฝาก', month: 'มิ.ย.', amount: 2801.97 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ก.ค.', amount: 750000.00 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'ก.ค.', amount: 22500.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ก.ค.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ส.ค.', amount: 507466.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ส.ค.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ก.ย.', amount: 148241.30 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ก.ย.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินจำหน่ายเสื้อแจ็คเก็ต', month: 'ก.ย.', amount: 3000.00 },
+            { category: 'รายรับ', detail: 'ดอกเบี้ยเงินฝาก ธกส.', month: 'ก.ย.', amount: 146.54 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'ต.ค.', amount: 20000.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ต.ค.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินจำหน่ายศษซาก', month: 'ต.ค.', amount: 24490.00 },
+            { category: 'รายรับ', detail: 'เงินมัดจำ', month: 'ต.ค.', amount: 6000.00 },
+            { category: 'รายรับ', detail: 'เงินค่าบำรุงกรรมการ', month: 'พ.ย.', amount: 47500.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'พ.ย.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'เงินมัดจำ', month: 'พ.ย.', amount: 41000.00 },
+            { category: 'รายรับ', detail: 'เงินสนับสนุนฯ', month: 'ธ.ค.', amount: 40000.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ธ.ค.', amount: 1000.00 },
+            { category: 'รายรับ', detail: 'ดอกเบี้ยเงินฝาก ธอส.', month: 'ธ.ค.', amount: 28.49 },
+            { category: 'รายรับ', detail: 'ดอกเบี้ยเงินฝาก กสิกร', month: 'ธ.ค.', amount: 62.30 },
+            { category: 'รายรับ', detail: 'เงินคืนเช่ารถ', month: 'ธ.ค.', amount: 3213.00 },
+            { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ม.ค.', amount: 1000.00 },
+
+            // --- รายจ่าย 2568 (New Full Set) ---
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ม.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ม.ค.', amount: 4500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ม.ค.', amount: 1578.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ม.ค.', amount: 2394.71 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'ม.ค.', amount: 21497.60 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ม.ค.', amount: 9057.50 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'ม.ค.', amount: 106181.50 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ม.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ม.ค.', amount: 280.37 },
+            { category: 'รายจ่าย', detail: 'ค่าแตะเอียพนักงาน', month: 'ม.ค.', amount: 75870.00 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.พ.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.พ.', amount: 3000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.พ.', amount: 1313.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.พ.', amount: 833.05 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'ก.พ.', amount: 7178.49 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ก.พ.', amount: 5150.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'ก.พ.', amount: 290642.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ก.พ.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ก.พ.', amount: 1538.20 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเกษียณอายุ', month: 'ก.พ.', amount: 690868.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ก.พ.', amount: 3220.00 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มี.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มี.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มี.ค.', amount: 1350.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มี.ค.', amount: 1109.08 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'มี.ค.', amount: 16703.40 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'มี.ค.', amount: 21019.63 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'มี.ค.', amount: 63070.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'มี.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสวัสดิการกรรมการ', month: 'มี.ค.', amount: 20000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'มี.ค.', amount: 1075.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'มี.ค.', amount: 1827.00 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'เม.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'เม.ย.', amount: 2064.48 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'เม.ย.', amount: 495.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'เม.ย.', amount: 1235.88 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'เม.ย.', amount: 5727.39 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'เม.ย.', amount: 80550.70 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'เม.ย.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'เม.ย.', amount: 1400.37 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'เม.ย.', amount: 785.00 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'พ.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'พ.ค.', amount: 1561.76 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'พ.ค.', amount: 622.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'พ.ค.', amount: 1074.08 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'พ.ค.', amount: 163.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'พ.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'พ.ค.', amount: 32930.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'พ.ค.', amount: 10403.87 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มิ.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มิ.ย.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มิ.ย.', amount: 1831.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มิ.ย.', amount: 5497.71 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'มิ.ย.', amount: 51500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'มิ.ย.', amount: 20319.63 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'มิ.ย.', amount: 176977.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'มิ.ย.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'มิ.ย.', amount: 850.83 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'มิ.ย.', amount: 4463.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษีที่ดิน', month: 'มิ.ย.', amount: 14876.46 },
+            { category: 'รายจ่าย', detail: 'ค่าผู้ตรวจสอบบัญชี', month: 'มิ.ย.', amount: 19000.00 },
+
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.ค.', amount: 1060.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.ค.', amount: 4712.97 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ก.ค.', amount: 14720.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ก.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ก.ค.', amount: 780.37 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ก.ค.', amount: 1217.99 },
+            { category: 'รายจ่าย', detail: 'ค่าสมัคร/ต่ออายุสถาบันเหล็ก', month: 'ก.ค.', amount: 15000.00 },
+
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ส.ค.', amount: 5714.09 },
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ส.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ส.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ส.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ส.ค.', amount: 1930.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ส.ค.', amount: 780.37 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ส.ค.', amount: 4226.29 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'ส.ค.', amount: 102235.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'ส.ค.', amount: 68500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ส.ค.', amount: 10000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเครื่องเขียนแบบพิมพ์', month: 'ส.ค.', amount: 1620.00 },
+
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.ย.', amount: 1810.82 },
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.ย.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ก.ย.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.ย.', amount: 423.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ก.ย.', amount: 500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าป้ายสมาคม', month: 'ก.ย.', amount: 1050.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ก.ย.', amount: 2967.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'ก.ย.', amount: 23285.30 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ก.ย.', amount: 5888.00 },
+
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ต.ค.', amount: 1321.36 },
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ต.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ต.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ต.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ต.ค.', amount: 1923.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ต.ค.', amount: 833.15 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ต.ค.', amount: 531.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประชุม/สัมมนา/จัดเลี้ยง', month: 'ต.ค.', amount: 106872.40 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'ต.ค.', amount: 600.00 },
+            { category: 'รายจ่าย', detail: 'ค่าโฆษณาสื่อสิ่งพิมพ์', month: 'ต.ค.', amount: 10000.00 },
+
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'พ.ย.', amount: 2640.17 },
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'พ.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'พ.ย.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'พ.ย.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'พ.ย.', amount: 725.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'พ.ย.', amount: 500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'พ.ย.', amount: 471.00 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเยี่ยมชมรง.', month: 'พ.ย.', amount: 60914.39 },
+            { category: 'รายจ่าย', detail: 'คืนเงินมัดจำ', month: 'พ.ย.', amount: 38000.00 },
+            { category: 'รายจ่าย', detail: 'ต่ออายุ line OA', month: 'พ.ย.', amount: 8626.18 },
+
+            { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ธ.ค.', amount: 788.32 },
+            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ธ.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ธ.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเช่าสำนักงาน', month: 'ธ.ค.', amount: 23000.00 },
+            { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ธ.ค.', amount: 54.00 },
+            { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ธ.ค.', amount: 1231.83 },
+            { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ธ.ค.', amount: 46.00 },
+            { category: 'รายจ่าย', detail: 'ค่าสิ่งพิมพ์', month: 'ธ.ค.', amount: 1500.00 },
+            { category: 'รายจ่าย', detail: 'สำรองจ่าย', month: 'ธ.ค.', amount: 2000.00 },
+        ];
+
+        // 2. Mock Data: เงินฝากธนาคาร
+        const bankData = [
+            { month: 'ม.ค.', ktb: 1308737.41, ghb: 718891.64, baac: 68014.94, lottery: 10000000 },
+            { month: 'ก.พ.', ktb: 524909.41, ghb: 719891.64, baac: 68014.94, lottery: 10000000 },
+            { month: 'มี.ค.', ktb: 295923.78, ghb: 720891.64, baac: 68165.77, lottery: 10000000 },
+            { month: 'เม.ย.', ktb: 295923.78, ghb: 721891.64, baac: 68165.77, lottery: 10000000 },
+            { month: 'พ.ค.', ktb: 663085.89, ghb: 2891.64, baac: 68165.77, lottery: 10000000 },
+            { month: 'มิ.ย.', ktb: 1879816.76, ghb: 5817.50, baac: 63165.77, lottery: 10000000 },
+            { month: 'ก.ค.', ktb: 2513726.76, ghb: 6817.50, baac: 63165.77, lottery: 10000000 },
+            { month: 'ส.ค.', ktb: 2728997.47, ghb: 7817.50, baac: 63165.77, lottery: 10000000 },
+            { month: 'ก.ย.', ktb: 2746944.47, ghb: 8817.50, baac: 63312.31, lottery: 10000000 },
+            { month: 'ต.ค.', ktb: 2573837.57, ghb: 9817.50, baac: 63312.31, lottery: 10000000 },
+            { month: 'พ.ย.', ktb: 2459300.57, ghb: 10517.50, baac: 63312.31, lottery: 10000000 },
+            { month: 'ธ.ค.', ktb: 2393643.57, ghb: 11845.99, baac: 63312.31, lottery: 10000000 },
+        ];
+
+        // 3. Mock Data: ประมาณการค่าใช้จ่าย 2569 (Adjusted based on 'ข้อมูล.csv' structure)
+        // Start Balance: 2,468,801.97
+        const projection2569Data = [
+            { month: 'ม.ค.', estimatedExpense: 172130 },
+            { month: 'ก.พ.', estimatedExpense: 517130 }, 
+            { month: 'มี.ค.', estimatedExpense: 152130 }, 
+            { month: 'เม.ย.', estimatedExpense: 224130 },
+            { month: 'พ.ค.', estimatedExpense: 182130 }, 
+            { month: 'มิ.ย.', estimatedExpense: 198130 }, 
+            { month: 'ก.ค.', estimatedExpense: 167130 }, 
+            { month: 'ส.ค.', estimatedExpense: 174130 }, 
+            { month: 'ก.ย.', estimatedExpense: 152130 }, 
+            { month: 'ต.ค.', estimatedExpense: 154130 }, 
+            { month: 'พ.ย.', estimatedExpense: 162130 }, 
+            { month: 'ธ.ค.', estimatedExpense: 74130 }    
+        ];
+
+        // Calculate Running Balance for Projection 2569
+        const initialBalance2569 = 2468801.97;
+        let runningBal = initialBalance2569;
+        const projection2569DataWithBalance = projection2569Data.map(item => {
+            runningBal -= item.estimatedExpense;
+            return { ...item, remainingBalance: runningBal };
+        });
+
+        // 4. Mock Data: Breakdown for Projection 2569 (Detailed Breakdown from 'ข้อมูล.csv')
+        const projection2569Details = [
+            { name: "เงินเดือน", value: 540000 }, 
+            { name: "เงินสมทบกองทุนประกันสังคม", value: 18000 }, 
+            { name: "ค่าใช้จ่ายในงานสังสรรค์ตรุษจีน", value: 345000 }, 
+            { name: "เงินสนับสนุนสมาคมจีนเก๊กเอี๊ย", value: 276000 }, 
+            { name: "ค่าใช้จ่ายในการประชุม", value: 770000 }, 
+            { name: "ค่ารับรอง", value: 220000 }, 
+            { name: "ค่าโฆษณา", value: 55000 }, 
+            { name: "ค่าไปรษณียากร", value: 22200 }, 
+            { name: "ค่าพาหนะ", value: 17000 }, 
+            { name: "ค่าใช้จ่ายเบ็ดเตล็ด", value: 18000 }, 
+            { name: "ค่าโทรศัพท์", value: 8400 }, 
+            { name: "ภาษีหัก ณ ที่จ่าย", value: 18000 }, 
+            { name: "ค่าใช้จ่ายเยี่ยมชมโรงงาน", value: 80000 }, 
+            { name: "ค่ารูปถ่าย", value: 2400 }, 
+            { name: "ค่าไฟฟ้า", value: 2400 }, 
+            { name: "ค่าน้ำประปา", value: 360 },
+            { name: "ค่าใช้จ่ายประชุมใหญ่สามัญ (ส่วนต่าง)", value: 72000 },
+            { name: "ค่าใช้จ่ายอื่นๆ (ธ.ค. และส่วนต่าง)", value: 4630 } 
+        ].sort((a,b) => b.value - a.value);
+
+        const monthOrder = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+        const COLORS_INCOME = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#059669', '#047857', '#064e3b', '#86efac'];
+        const COLORS_EXPENSE = ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#b91c1c', '#991b1b', '#7f1d1d', '#fca5a5', '#fb7185', '#e11d48'];
+        const COLORS_BANK = { ktb: '#0ea5e9', ghb: '#f97316', baac: '#84cc16', lottery: '#a855f7' };
+
+        const formatMoney = (val) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 0 }).format(val);
+
+        const App = () => {
+            const [currentTab, setCurrentTab] = useState('dashboard');
+            
+            // --- Income/Expense Logic ---
+            const [selectedCategory, setSelectedCategory] = useState('all');
+            const uniqueDetails = useMemo(() => {
+                const incomeDetails = [...new Set(rawData.filter(d => d.category === 'รายรับ').map(d => d.detail))].sort();
+                const expenseDetails = [...new Set(rawData.filter(d => d.category === 'รายจ่าย').map(d => d.detail))].sort();
+                return { income: incomeDetails, expense: expenseDetails };
+            }, []);
+            const [activeDetails, setActiveDetails] = useState(() => [...uniqueDetails.income, ...uniqueDetails.expense]);
+            const [chartType, setChartType] = useState('bar'); 
+            const [expandedChart, setExpandedChart] = useState(null);
+            
+            // State for Projection Detail Modal
+            const [showProjectionModal, setShowProjectionModal] = useState(false);
+
+            // State for Interactive Projection Chart
+            const [activeProjectionData, setActiveProjectionData] = useState(null);
+
+            const handleCardClick = (type) => {
+                if (type === 'income') setSelectedCategory('income');
+                else if (type === 'expense') setSelectedCategory('expense');
+                else setSelectedCategory('all');
+            };
+
+            const dataFilteredByDetails = useMemo(() => rawData.filter(item => activeDetails.includes(item.detail)), [activeDetails]);
+            
+            const finalDisplayData = useMemo(() => {
+                let data = dataFilteredByDetails;
+                if (selectedCategory === 'income') data = data.filter(d => d.category === 'รายรับ');
+                else if (selectedCategory === 'expense') data = data.filter(d => d.category === 'รายจ่าย');
+                const sorted = [...data].sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
+                return sorted;
+            }, [dataFilteredByDetails, selectedCategory]);
+
+            const tableDataWithBalance = useMemo(() => {
+                let runningBalance = INITIAL_BALANCE_2568; // Initialize with opening balance
+                return finalDisplayData.map((item) => {
+                    if (item.category === 'รายรับ') runningBalance += item.amount;
+                    else runningBalance -= item.amount;
+                    return { ...item, runningBalance };
+                });
+            }, [finalDisplayData]);
+
+            const currentTotals = useMemo(() => {
+                const inc = dataFilteredByDetails.filter(d => d.category === 'รายรับ').reduce((sum, curr) => sum + curr.amount, 0);
+                const exp = dataFilteredByDetails.filter(d => d.category === 'รายจ่าย').reduce((sum, curr) => sum + curr.amount, 0);
+                return { income: inc, expense: exp, balance: inc - exp };
+            }, [dataFilteredByDetails]);
+
+            const monthlyData = useMemo(() => {
+                const grouped = {};
+                monthOrder.forEach(m => grouped[m] = { name: m, รายรับ: 0, รายจ่าย: 0, balance: 0 });
+                finalDisplayData.forEach(item => {
+                    if (grouped[item.month]) {
+                        grouped[item.month][item.category] += item.amount;
+                        if (item.category === 'รายรับ') grouped[item.month].balance += item.amount;
+                        else grouped[item.month].balance -= item.amount;
+                    }
+                });
+                return Object.values(grouped);
+            }, [finalDisplayData]);
+
+            const detailBreakdown = useMemo(() => {
+                const incomeObj = {};
+                const expenseObj = {};
+                finalDisplayData.forEach(item => {
+                    if (item.category === 'รายรับ') incomeObj[item.detail] = (incomeObj[item.detail] || 0) + item.amount;
+                    else expenseObj[item.detail] = (expenseObj[item.detail] || 0) + item.amount;
+                });
+                const incomeArr = Object.entries(incomeObj).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value);
+                const expenseArr = Object.entries(expenseObj).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value);
+                return { income: incomeArr, expense: expenseArr };
+            }, [finalDisplayData]);
+
+            const toggleDetail = (detail) => setActiveDetails(prev => prev.includes(detail) ? prev.filter(d => d !== detail) : [...prev, detail]);
+            const toggleAll = (type, select) => {
+                const targets = type === 'รายรับ' ? uniqueDetails.income : uniqueDetails.expense;
+                if (select) setActiveDetails(prev => [...new Set([...prev, ...targets])]);
+                else setActiveDetails(prev => prev.filter(d => !targets.includes(d)));
+            };
+
+            // --- Bank Logic ---
+            const [activeBankData, setActiveBankData] = useState(bankData[0]);
+            const activeAvailable = activeBankData.ktb + activeBankData.ghb + activeBankData.baac;
+            const activeTotalAsset = activeAvailable + activeBankData.lottery;
+
+            const handleBankChartMove = (state) => {
+                if (state && state.activePayload && state.activePayload.length > 0) {
+                    setActiveBankData(state.activePayload[0].payload);
+                }
+            };
+            const handleBankChartLeave = () => setActiveBankData(bankData[0]);
+
+            // --- Projection Chart Handlers ---
+            const handleProjectionChartMove = (state) => {
+                if (state && state.activePayload && state.activePayload.length > 0) {
+                    setActiveProjectionData(state.activePayload[0].payload);
+                }
+            };
+            
+            const handleProjectionChartLeave = () => setActiveProjectionData(null);
+
+            // --- Render Helpers ---
+            const renderMainChart = () => {
+                const CommonProps = { data: monthlyData, margin: { top: 20, right: 30, left: 20, bottom: 5 } };
+                const Gradients = (
+                    <defs>
+                        <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/><stop offset="95%" stopColor="#10b981" stopOpacity={0}/></linearGradient>
+                        <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/><stop offset="95%" stopColor="#ef4444" stopOpacity={0}/></linearGradient>
+                    </defs>
+                );
+                if (chartType === 'area') return <AreaChart {...CommonProps}>{Gradients}<CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} /><Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} /><Legend />{(selectedCategory === 'all' || selectedCategory === 'income') && <Area type="monotone" dataKey="รายรับ" stroke="#10b981" fillOpacity={1} fill="url(#colorIncome)" />}{(selectedCategory === 'all' || selectedCategory === 'expense') && <Area type="monotone" dataKey="รายจ่าย" stroke="#ef4444" fillOpacity={1} fill="url(#colorExpense)" />}</AreaChart>;
+                if (chartType === 'composed') return <ComposedChart {...CommonProps}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis yAxisId="left" axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} /><YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} /><Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} /><Legend />{(selectedCategory === 'all' || selectedCategory === 'income') && <Bar yAxisId="left" dataKey="รายรับ" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />}{(selectedCategory === 'all' || selectedCategory === 'expense') && <Bar yAxisId="left" dataKey="รายจ่าย" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={50} />}{selectedCategory === 'all' && <Line yAxisId="right" type="monotone" dataKey="balance" name="ยอดคงเหลือ (Net)" stroke="#3b82f6" strokeWidth={3} dot={{r:4}} />}</ComposedChart>;
+                if (chartType === 'line') return <LineChart {...CommonProps}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" /><XAxis dataKey="name" axisLine={false} tickLine={false} padding={{ left: 20, right: 20 }} /><YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} /><Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} /><Legend />{(selectedCategory === 'all' || selectedCategory === 'income') && <Line type="monotone" dataKey="รายรับ" stroke="#10b981" strokeWidth={3} activeDot={{ r: 8 }} dot={{ r: 4 }} />}{(selectedCategory === 'all' || selectedCategory === 'expense') && <Line type="monotone" dataKey="รายจ่าย" stroke="#ef4444" strokeWidth={3} activeDot={{ r: 8 }} dot={{ r: 4 }} />}</LineChart>;
+                return <BarChart {...CommonProps}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} /><Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} /><Legend />{(selectedCategory === 'all' || selectedCategory === 'income') && <Bar dataKey="รายรับ" name="รายรับ" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />}{(selectedCategory === 'all' || selectedCategory === 'expense') && <Bar dataKey="รายจ่าย" name="รายจ่าย" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={50} />}</BarChart>;
+            };
+
+            const ExpandedChartModal = () => {
+                if (!expandedChart) return null;
+                const isIncome = expandedChart === 'income';
+                const data = isIncome ? detailBreakdown.income : detailBreakdown.expense;
+                const colors = isIncome ? COLORS_INCOME : COLORS_EXPENSE;
+                const title = isIncome ? 'รายละเอียดสัดส่วนรายรับ' : 'รายละเอียดสัดส่วนรายจ่าย';
+                const total = isIncome ? currentTotals.income : currentTotals.expense;
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setExpandedChart(null)}>
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <div><h2 className={`text-xl font-bold ${isIncome ? 'text-green-700' : 'text-red-700'}`}>{title}</h2><p className="text-gray-500 text-sm mt-1">ยอดรวมทั้งหมด: <span className="font-semibold text-gray-800">{formatMoney(total)}</span></p></div>
+                                <button onClick={() => setExpandedChart(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors"><XIcon size={24} className="text-gray-500" /></button>
+                            </div>
+                            <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
+                                <div className="w-full md:w-1/2 h-80 min-h-[300px] flex items-center justify-center relative">
+                                    <ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={data} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={2} dataKey="value" label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => { if (percent < 0.05) return null; const RADIAN = Math.PI / 180; const radius = innerRadius + (outerRadius - innerRadius) * 0.5; const x = cx + radius * Math.cos(-midAngle * RADIAN); const y = cy + radius * Math.sin(-midAngle * RADIAN); return (<text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize={12} fontWeight="bold">{`${(percent * 100).toFixed(0)}%`}</text>); }}>{data.map((entry, index) => (<Cell key={`cell-${index}`} fill={colors[index % colors.length]} />))}</Pie><Tooltip formatter={(val) => formatMoney(val)} contentStyle={{ borderRadius: '8px' }} /></PieChart></ResponsiveContainer>
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><div className="text-center"><p className="text-sm text-gray-400">Total</p><p className={`text-lg font-bold ${isIncome ? 'text-green-600' : 'text-red-600'}`}>{formatMoney(total)}</p></div></div>
+                                </div>
+                                <div className="w-full md:w-1/2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar"><table className="w-full text-sm"><thead className="sticky top-0 bg-white z-10 text-gray-500 border-b border-gray-100"><tr><th className="text-left pb-2 pl-2">รายการ</th><th className="text-right pb-2">จำนวนเงิน</th><th className="text-right pb-2 pr-2">%</th></tr></thead><tbody className="divide-y divide-gray-50">{data.map((item, idx) => (<tr key={idx} className="hover:bg-gray-50 transition-colors group"><td className="py-3 pl-2 flex items-center gap-2"><div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: colors[idx % colors.length]}}></div><span className="text-gray-700 font-medium truncate" title={item.name}>{item.name}</span></td><td className="py-3 text-right text-gray-600">{formatMoney(item.value)}</td><td className="py-3 pr-2 text-right font-semibold text-gray-800">{((item.value / (total || 1)) * 100).toFixed(1)}%</td></tr>))}</tbody></table></div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // 5. Projection Detail Modal (For 2569)
+            const ProjectionDetailModal = () => {
+                if (!showProjectionModal) return null;
+                const totalExpense2569 = projection2569DataWithBalance.reduce((sum, item) => sum + item.estimatedExpense, 0);
+                
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowProjectionModal(false)}>
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <div><h2 className="text-xl font-bold text-rose-700">รายละเอียดค่าใช้จ่ายปี 2569 (โดยประมาณ)</h2><p className="text-gray-500 text-sm mt-1">ยอดรวมทั้งหมด: <span className="font-semibold text-gray-800">{formatMoney(totalExpense2569)}</span></p></div>
+                                <button onClick={() => setShowProjectionModal(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors"><XIcon size={24} className="text-gray-500" /></button>
+                            </div>
+                            <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
+                                {/* Left: Pie Chart */}
+                                <div className="w-full md:w-1/2 h-80 min-h-[300px] flex items-center justify-center relative">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie data={projection2569Details} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={2} dataKey="value">
+                                                {projection2569Details.map((entry, index) => (<Cell key={`cell-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />))}
+                                            </Pie>
+                                            <Tooltip formatter={(val) => formatMoney(val)} contentStyle={{ borderRadius: '8px' }} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><div className="text-center"><p className="text-sm text-gray-400">Total</p><p className="text-lg font-bold text-rose-600">{formatMoney(totalExpense2569)}</p></div></div>
+                                </div>
+                                {/* Right: Detailed List */}
+                                <div className="w-full md:w-1/2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                                    <table className="w-full text-sm">
+                                        <thead className="sticky top-0 bg-white z-10 text-gray-500 border-b border-gray-100">
+                                            <tr><th className="text-left pb-2 pl-2">รายการค่าใช้จ่าย</th><th className="text-right pb-2">จำนวนเงิน (ปี)</th></tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {projection2569Details.map((item, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50 transition-colors group">
+                                                    <td className="py-3 pl-2 flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS_EXPENSE[idx % COLORS_EXPENSE.length]}}></div>
+                                                        <span className="text-gray-700 font-medium truncate" title={item.name}>{item.name}</span>
+                                                    </td>
+                                                    <td className="py-3 text-right text-gray-600">{formatMoney(item.value)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // 4. Render Projection 2569 Tab
+            const renderProjection2569 = () => {
+                const totalExpense = projection2569DataWithBalance.reduce((sum, item) => sum + item.estimatedExpense, 0);
+                const finalBalance = projection2569DataWithBalance[projection2569DataWithBalance.length - 1].remainingBalance;
+
+                // Values for Cards (Dynamic or Default)
+                const displayBalance = activeProjectionData ? activeProjectionData.remainingBalance : finalBalance;
+                const displayExpense = activeProjectionData ? activeProjectionData.estimatedExpense : totalExpense;
+                const displayMonth = activeProjectionData ? activeProjectionData.month : 'สิ้นปี 2569';
+                const expenseLabel = activeProjectionData ? `ค่าใช้จ่ายประจำเดือน ${activeProjectionData.month}` : 'รวมค่าใช้จ่ายทั้งปี 2569';
+
+                return (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-indigo-500">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">ยอดเงินฝากคงเหลือ</p>
+                                        <div className="flex items-end gap-2">
+                                            <h2 className="text-2xl font-bold text-gray-800">{formatMoney(displayBalance)}</h2>
+                                            <span className="text-xs text-gray-400 mb-1">({displayMonth})</span>
+                                        </div>
+                                        <p className="text-xs text-indigo-600 mt-2">คำนวณจากยอดตั้งต้น 2,468,801.97</p>
+                                    </div>
+                                    <div className="p-3 bg-indigo-100 rounded-full text-indigo-600"><Calculator size={24} /></div>
+                                </div>
+                            </div>
+                            <div 
+                                className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-rose-500 cursor-pointer hover:shadow-md transition-all hover:-translate-y-1 relative group"
+                                onClick={() => !activeProjectionData && setShowProjectionModal(true)} // Only open modal if not interacting with chart specific month (optional UX choice, but usually good)
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">{expenseLabel}</p>
+                                        <h2 className="text-2xl font-bold text-gray-800">{formatMoney(displayExpense)}</h2>
+                                        {!activeProjectionData && (
+                                            <p className="text-xs text-rose-600 mt-2 flex items-center gap-1">
+                                                <ZoomIn size={12}/> คลิกเพื่อดูรายละเอียดรายปี
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="p-3 bg-rose-100 rounded-full text-rose-600"><TrendingDown size={24} /></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Projection Chart */}
+                        <div className="bg-white p-6 rounded-xl shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-6">กราฟแสดงประมาณการค่าใช้จ่ายและเงินฝากคงเหลือ ปี 2569</h3>
+                            <div className="h-96 w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <ComposedChart 
+                                        data={projection2569DataWithBalance} 
+                                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                        onMouseMove={handleProjectionChartMove}
+                                        onMouseLeave={handleProjectionChartLeave}
+                                        onClick={handleProjectionChartMove}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                                        <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                                        <YAxis yAxisId="left" axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} />
+                                        <YAxis 
+                                            yAxisId="right" 
+                                            orientation="right" 
+                                            axisLine={false} 
+                                            tickLine={false} 
+                                            tickFormatter={(val) => val >= 1000000 ? `฿${(val/1000000).toFixed(1)}M` : `฿${(val/1000).toFixed(0)}k`} 
+                                            domain={['auto', 'auto']}
+                                        />
+                                        <Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} />
+                                        <Legend />
+                                        <Bar yAxisId="left" dataKey="estimatedExpense" name="ค่าใช้จ่ายรายเดือน" fill="#f87171" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                                        <Line yAxisId="right" type="monotone" dataKey="remainingBalance" name="เงินฝากคงเหลือสะสม" stroke="#4f46e5" strokeWidth={3} dot={{r:4}} />
+                                    </ComposedChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Projection Table */}
+                        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                                <h3 className="text-lg font-semibold text-gray-800">ตารางประมาณการรายเดือน ปี 2569</h3>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm text-gray-600">
+                                    <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10">
+                                        <tr>
+                                            <th className="px-6 py-3">เดือน</th>
+                                            <th className="px-6 py-3 text-right text-red-600">ประมาณการรายจ่าย</th>
+                                            <th className="px-6 py-3 text-right text-indigo-600">เงินฝากคงเหลือสะสม</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {projection2569DataWithBalance.map((item, idx) => (
+                                            <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-3 font-medium">{item.month}</td>
+                                                <td className="px-6 py-3 text-right font-medium text-red-600">{formatMoney(item.estimatedExpense)}</td>
+                                                <td className="px-6 py-3 text-right font-bold text-indigo-600">{formatMoney(item.remainingBalance)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <ProjectionDetailModal />
+                    </div>
+                );
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto p-4 md:p-8">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">สมาคมโลหะไทย (2568)</h1>
+                            <p className="text-gray-500">รายงานสถานะทางการเงิน</p>
+                        </div>
+                        <div className="mt-4 md:mt-0 bg-white p-1 rounded-lg shadow-sm border border-gray-200 flex flex-wrap gap-1">
+                            <button onClick={() => setCurrentTab('dashboard')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${currentTab === 'dashboard' ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}><BarChart2 size={18} /> ภาพรวมรายรับ-รายจ่าย</button>
+                            <button onClick={() => setCurrentTab('bank')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${currentTab === 'bank' ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}><Landmark size={18} /> เงินฝากธนาคาร</button>
+                            <button onClick={() => setCurrentTab('projection2569')} className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${currentTab === 'projection2569' ? 'bg-blue-50 text-blue-700 shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`}><Calculator size={18} /> ประมาณการ 2569</button>
+                        </div>
+                    </div>
+
+                    {currentTab === 'dashboard' ? (
+                        <div className="space-y-8 animate-in fade-in duration-500">
+                            {/* KPI Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div onClick={() => handleCardClick('income')} className={`cursor-pointer bg-white rounded-xl p-6 shadow-sm border-l-4 border-green-500 transform transition-all hover:shadow-md hover:-translate-y-1 ${selectedCategory === 'income' ? 'ring-2 ring-green-400 bg-green-50' : ''}`}><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">รายรับรวม</p><h2 className="text-2xl font-bold text-gray-800">{formatMoney(currentTotals.income)}</h2><span className="text-xs text-green-600 flex items-center gap-1 mt-1"><MousePointerClick size={12}/> คลิกเพื่อดูรายรับ</span></div><div className={`p-3 rounded-full ${selectedCategory === 'income' ? 'bg-green-200 text-green-700' : 'bg-green-100 text-green-600'}`}><TrendingUp size={24} /></div></div></div>
+                                <div onClick={() => handleCardClick('expense')} className={`cursor-pointer bg-white rounded-xl p-6 shadow-sm border-l-4 border-red-500 transform transition-all hover:shadow-md hover:-translate-y-1 ${selectedCategory === 'expense' ? 'ring-2 ring-red-400 bg-red-50' : ''}`}><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">รายจ่ายรวม</p><h2 className="text-2xl font-bold text-gray-800">{formatMoney(currentTotals.expense)}</h2><span className="text-xs text-red-600 flex items-center gap-1 mt-1"><MousePointerClick size={12}/> คลิกเพื่อดูรายจ่าย</span></div><div className={`p-3 rounded-full ${selectedCategory === 'expense' ? 'bg-red-200 text-red-700' : 'bg-red-100 text-red-600'}`}><TrendingDown size={24} /></div></div></div>
+                                <div onClick={() => handleCardClick('all')} className={`cursor-pointer bg-white rounded-xl p-6 shadow-sm border-l-4 transform transition-all hover:shadow-md hover:-translate-y-1 ${currentTotals.balance >= 0 ? 'border-blue-500' : 'border-orange-500'} ${selectedCategory === 'all' ? 'ring-2 ring-blue-200' : ''}`}><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">คงเหลือสุทธิ (รวมยกมา)</p><h2 className={`text-2xl font-bold ${currentTotals.balance + INITIAL_BALANCE_2568 >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>{formatMoney(currentTotals.balance + INITIAL_BALANCE_2568)}</h2><span className="text-xs text-gray-400 flex items-center gap-1 mt-1"><MousePointerClick size={12}/> คลิกเพื่อดูภาพรวม</span></div><div className={`p-3 rounded-full ${currentTotals.balance + INITIAL_BALANCE_2568 >= 0 ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}><Wallet size={24} /></div></div></div>
+                            </div>
+
+                            {/* Filter Section */}
+                            <div className="bg-white rounded-xl shadow-sm p-6">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><Filter size={20} /> ตัวกรองรายละเอียด</h3>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <div className={`${selectedCategory === 'expense' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-green-600 font-medium">หมวดรายรับ</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายรับ', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายรับ', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.income.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
+                                    <div className={`${selectedCategory === 'income' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-red-600 font-medium">หมวดรายจ่าย</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายจ่าย', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายจ่าย', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.expense.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
+                                </div>
+                            </div>
+
+                            {/* Charts */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm flex flex-col">
+                                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800">เปรียบเทียบรายรับ-รายจ่าย</h3>
+                                        <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                                            {/* Chart View Mode */}
+                                            <div className="flex bg-gray-100 p-1 rounded-lg">
+                                                <button onClick={() => setChartType('bar')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='bar'?'bg-white shadow-sm':'text-gray-500'}`}>แท่ง</button>
+                                                <button onClick={() => setChartType('line')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='line'?'bg-white shadow-sm':'text-gray-500'}`}>เส้น</button>
+                                                <button onClick={() => setChartType('area')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='area'?'bg-white shadow-sm':'text-gray-500'}`}>พื้นที่</button>
+                                                <button onClick={() => setChartType('composed')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='composed'?'bg-white shadow-sm':'text-gray-500'}`}>ผสม</button>
+                                            </div>
+                                            {/* Chart Filter Buttons */}
+                                            <div className="flex bg-blue-50 p-1 rounded-lg border border-blue-100">
+                                                <button onClick={() => handleCardClick('all')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='all'?'bg-blue-600 text-white shadow-sm':'text-blue-600 hover:bg-blue-100'}`}>ทั้งหมด</button>
+                                                <button onClick={() => handleCardClick('income')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='income'?'bg-green-500 text-white shadow-sm':'text-green-600 hover:bg-green-100'}`}>รายรับ</button>
+                                                <button onClick={() => handleCardClick('expense')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='expense'?'bg-red-500 text-white shadow-sm':'text-red-600 hover:bg-red-100'}`}>รายจ่าย</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="h-80 w-full flex-grow"><ResponsiveContainer width="100%" height="100%">{renderMainChart()}</ResponsiveContainer></div>
+                                </div>
+                                <div className="flex flex-col gap-6">
+                                    {(selectedCategory === 'all' || selectedCategory === 'income') && <div className="bg-white p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-green-100 border border-transparent" onClick={() => setExpandedChart('income')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายรับ</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.income} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.income.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_INCOME[index % COLORS_INCOME.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
+                                    {(selectedCategory === 'all' || selectedCategory === 'expense') && <div className="bg-white p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-red-100 border border-transparent" onClick={() => setExpandedChart('expense')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายจ่าย</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.expense} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.expense.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
+                                </div>
+                            </div>
+
+                            {/* Table */}
+                            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center"><h3 className="text-lg font-semibold text-gray-800">รายการข้อมูล (Filtered Data)</h3><span className="text-sm text-gray-500">{tableDataWithBalance.length} รายการ</span></div>
+                                <div className="overflow-x-auto max-h-96">
+                                    <table className="w-full text-left text-sm text-gray-600">
+                                        <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10"><tr><th className="px-6 py-3">เดือน</th><th className="px-6 py-3">หมวด</th><th className="px-6 py-3">รายละเอียด</th><th className="px-6 py-3 text-right text-green-700">รายรับ</th><th className="px-6 py-3 text-right text-red-700">รายจ่าย</th><th className="px-6 py-3 text-right text-blue-800">คงเหลือสะสม</th></tr></thead>
+                                        <tbody className="divide-y divide-gray-100">
+                                            {tableDataWithBalance.length > 0 ? tableDataWithBalance.map((item, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-3">{item.month}</td>
+                                                    <td className="px-6 py-3"><span className={`px-2 py-1 rounded-md text-xs font-medium ${item.category==='รายรับ'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`}>{item.category}</span></td>
+                                                    <td className="px-6 py-3">{item.detail}</td>
+                                                    <td className="px-6 py-3 text-right font-medium text-green-700">{item.category==='รายรับ'?formatMoney(item.amount):'-'}</td>
+                                                    <td className="px-6 py-3 text-right font-medium text-red-700">{item.category==='รายจ่าย'?formatMoney(item.amount):'-'}</td>
+                                                    <td className="px-6 py-3 text-right font-bold text-blue-800">{formatMoney(item.runningBalance)}</td>
+                                                </tr>
+                                            )) : <tr><td colSpan="6" className="px-6 py-8 text-center text-gray-400">ไม่พบข้อมูล</td></tr>}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <ExpandedChartModal />
+                        </div>
+                    ) : currentTab === 'bank' ? (
+                        <div className="space-y-8 animate-in fade-in duration-500">
+                            {/* Bank KPI */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-blue-500"><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">ยอดเงินฝากตั้งต้น (เงินสดหมุนเวียน)</p><div className="flex items-end gap-2"><h2 className="text-2xl font-bold text-gray-800">{formatMoney(activeAvailable)}</h2><span className="text-xs text-gray-400 mb-1">({activeBankData.month})</span></div></div><div className="p-3 bg-blue-100 rounded-full text-blue-600"><Landmark size={24} /></div></div></div>
+                                <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-purple-500"><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">รวมทรัพย์สินทั้งหมด</p><div className="flex items-end gap-2"><h2 className="text-2xl font-bold text-gray-800">{formatMoney(activeTotalAsset)}</h2><span className="text-xs text-gray-400 mb-1">({activeBankData.month})</span></div></div><div className="p-3 bg-purple-100 rounded-full text-purple-600"><Coins size={24} /></div></div></div>
+                            </div>
+                            {/* Bank Chart */}
+                            <div className="bg-white p-6 rounded-xl shadow-sm">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-6">แนวโน้มเงินฝากแต่ละธนาคาร</h3>
+                                <div className="h-96 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={bankData} margin={{top:20,right:30,left:20,bottom:5}} onMouseMove={handleBankChartMove} onMouseLeave={handleBankChartLeave} onClick={handleBankChartMove}>
+                                            <defs>
+                                                <linearGradient id="colorKTB" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS_BANK.ktb} stopOpacity={0.8}/><stop offset="95%" stopColor={COLORS_BANK.ktb} stopOpacity={0}/></linearGradient>
+                                                <linearGradient id="colorGHB" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS_BANK.ghb} stopOpacity={0.8}/><stop offset="95%" stopColor={COLORS_BANK.ghb} stopOpacity={0}/></linearGradient>
+                                                <linearGradient id="colorBAAC" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={COLORS_BANK.baac} stopOpacity={0.8}/><stop offset="95%" stopColor={COLORS_BANK.baac} stopOpacity={0}/></linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                                            <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                                            <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} />
+                                            <Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} />
+                                            <Legend />
+                                            <Area type="monotone" dataKey="ktb" name="กรุงไทย" stackId="1" stroke={COLORS_BANK.ktb} fill="url(#colorKTB)" />
+                                            <Area type="monotone" dataKey="ghb" name="ธอส." stackId="1" stroke={COLORS_BANK.ghb} fill="url(#colorGHB)" />
+                                            <Area type="monotone" dataKey="baac" name="ธกส." stackId="1" stroke={COLORS_BANK.baac} fill="url(#colorBAAC)" />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                            {/* Bank Table */}
+                            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center"><h3 className="text-lg font-semibold text-gray-800">ตารางยอดเงินฝากรายเดือน</h3></div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-sm text-gray-600">
+                                        <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10"><tr><th className="px-6 py-3">เดือน</th><th className="px-6 py-3 text-right text-blue-600">กรุงไทย</th><th className="px-6 py-3 text-right text-orange-600">ธอส.</th><th className="px-6 py-3 text-right text-lime-600">ธกส.</th><th className="px-6 py-3 text-right text-purple-600">สลากออมสิน</th><th className="px-6 py-3 text-right text-gray-800 font-bold">รวม (หมุนเวียน)</th></tr></thead>
+                                        <tbody className="divide-y divide-gray-100">{bankData.map((item, idx) => (<tr key={idx} className="hover:bg-gray-50 transition-colors"><td className="px-6 py-3 font-medium">{item.month}</td><td className="px-6 py-3 text-right">{formatMoney(item.ktb)}</td><td className="px-6 py-3 text-right">{formatMoney(item.ghb)}</td><td className="px-6 py-3 text-right">{formatMoney(item.baac)}</td><td className="px-6 py-3 text-right">{formatMoney(item.lottery)}</td><td className="px-6 py-3 text-right font-bold text-gray-800">{formatMoney(item.ktb+item.ghb+item.baac)}</td></tr>))}</tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    ) : renderProjection2569()}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
