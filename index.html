@@ -38,8 +38,6 @@
 
     <script type="text/babel">
         const { useState, useMemo } = React;
-        
-        // Access Recharts from the global window object safely
         const { 
             BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
             PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart 
@@ -116,7 +114,7 @@
             { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ม.ค.', amount: 1000.00 },
 
             // --- รายจ่าย 2568 (New Full Set) ---
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ม.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ม.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ม.ค.', amount: 4500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ม.ค.', amount: 1578.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ม.ค.', amount: 2394.71 },
@@ -127,7 +125,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ม.ค.', amount: 280.37 },
             { category: 'รายจ่าย', detail: 'ค่าแตะเอียพนักงาน', month: 'ม.ค.', amount: 75870.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.พ.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ก.พ.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.พ.', amount: 3000.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.พ.', amount: 1313.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.พ.', amount: 833.05 },
@@ -139,7 +137,7 @@
             { category: 'รายจ่าย', detail: 'ค่าเงินเกษียณอายุ', month: 'ก.พ.', amount: 690868.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ก.พ.', amount: 3220.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มี.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'มี.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มี.ค.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มี.ค.', amount: 1350.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มี.ค.', amount: 1109.08 },
@@ -151,7 +149,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'มี.ค.', amount: 1075.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'มี.ค.', amount: 1827.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'เม.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'เม.ย.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'เม.ย.', amount: 2064.48 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'เม.ย.', amount: 495.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'เม.ย.', amount: 1235.88 },
@@ -161,7 +159,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'เม.ย.', amount: 1400.37 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'เม.ย.', amount: 785.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'พ.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'พ.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'พ.ค.', amount: 1561.76 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'พ.ค.', amount: 622.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'พ.ค.', amount: 1074.08 },
@@ -170,7 +168,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'พ.ค.', amount: 32930.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'พ.ค.', amount: 10403.87 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มิ.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'มิ.ย.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มิ.ย.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มิ.ย.', amount: 1831.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มิ.ย.', amount: 5497.71 },
@@ -183,7 +181,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษีที่ดิน', month: 'มิ.ย.', amount: 14876.46 },
             { category: 'รายจ่าย', detail: 'ค่าผู้ตรวจสอบบัญชี', month: 'มิ.ย.', amount: 19000.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ก.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.ค.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.ค.', amount: 1060.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.ค.', amount: 4712.97 },
@@ -254,7 +252,7 @@
             { month: 'ม.ค.', ktb: 1308737.41, ghb: 718891.64, baac: 68014.94, lottery: 10000000 },
             { month: 'ก.พ.', ktb: 524909.41, ghb: 719891.64, baac: 68014.94, lottery: 10000000 },
             { month: 'มี.ค.', ktb: 295923.78, ghb: 720891.64, baac: 68165.77, lottery: 10000000 },
-            { month: 'เม.ย.', ktb: 295923.78, ghb: 721891.64, baac: 68165.77, lottery: 10000000 },
+            { month: 'เม.ย.', ktb: 295923.78, ghb: 721891.64, baac: 68165.77, lottery: 10000000 }, // Updated baac
             { month: 'พ.ค.', ktb: 663085.89, ghb: 2891.64, baac: 68165.77, lottery: 10000000 },
             { month: 'มิ.ย.', ktb: 1879816.76, ghb: 5817.50, baac: 63165.77, lottery: 10000000 },
             { month: 'ก.ค.', ktb: 2513726.76, ghb: 6817.50, baac: 63165.77, lottery: 10000000 },
@@ -265,7 +263,8 @@
             { month: 'ธ.ค.', ktb: 2393643.57, ghb: 11845.99, baac: 63312.31, lottery: 10000000 },
         ];
 
-        // 3. Mock Data: ประมาณการค่าใช้จ่าย 2569
+        // 3. Mock Data: ประมาณการค่าใช้จ่าย 2569 (Adjusted based on 'ข้อมูล.csv' structure)
+        // Start Balance: 2,468,801.97
         const projection2569Data = [
             { month: 'ม.ค.', estimatedExpense: 172130 },
             { month: 'ก.พ.', estimatedExpense: 517130 }, 
@@ -289,20 +288,20 @@
             return { ...item, remainingBalance: runningBal };
         });
 
-        // 4. Mock Data: Breakdown for Projection 2569
+        // 4. Mock Data: Breakdown for Projection 2569 (Detailed Breakdown from 'ข้อมูล.csv')
         const projection2569Details = [
             { name: "เงินเดือน", value: 540000 }, 
             { name: "เงินสมทบกองทุนประกันสังคม", value: 18000 }, 
             { name: "ค่าใช้จ่ายในงานสังสรรค์ตรุษจีน", value: 345000 }, 
             { name: "เงินสนับสนุนสมาคมจีนเก๊กเอี๊ย", value: 276000 }, 
-            { name: "ค่าใช้จ่ายในการประชุม", value: 780000 }, 
-            { name: "ค่ารับรอง", value: 180000 }, 
-            { name: "ค่าโฆษณา", value: 45000 }, 
-            { name: "ค่าไปรษณียากร", value: 12000 }, 
-            { name: "ค่าพาหนะ", value: 12000 }, 
-            { name: "ค่าใช้จ่ายเบ็ดเตล็ด", value: 12000 }, 
+            { name: "ค่าใช้จ่ายในการประชุม", value: 770000 }, 
+            { name: "ค่ารับรอง", value: 220000 }, 
+            { name: "ค่าโฆษณา", value: 55000 }, 
+            { name: "ค่าไปรษณียากร", value: 22200 }, 
+            { name: "ค่าพาหนะ", value: 17000 }, 
+            { name: "ค่าใช้จ่ายเบ็ดเตล็ด", value: 18000 }, 
             { name: "ค่าโทรศัพท์", value: 8400 }, 
-            { name: "ภาษีหัก ณ ที่จ่าย", value: 12000 }, 
+            { name: "ภาษีหัก ณ ที่จ่าย", value: 18000 }, 
             { name: "ค่าใช้จ่ายเยี่ยมชมโรงงาน", value: 80000 }, 
             { name: "ค่ารูปถ่าย", value: 2400 }, 
             { name: "ค่าไฟฟ้า", value: 2400 }, 
@@ -320,7 +319,7 @@
 
         const App = () => {
             const [currentTab, setCurrentTab] = useState('dashboard');
-            const [showFilters, setShowFilters] = useState(false); // New state for toggling filters
+            const [showFilters, setShowFilters] = useState(false);
             
             // --- Income/Expense Logic ---
             const [selectedCategory, setSelectedCategory] = useState('all');
@@ -369,7 +368,7 @@
             }, [dataFilteredByDetails, selectedCategory]);
 
             const tableDataWithBalance = useMemo(() => {
-                let runningBalance = INITIAL_BALANCE_2568; // Initialize with opening balance
+                let runningBalance = INITIAL_BALANCE_2568; 
                 return finalDisplayData.map((item) => {
                     if (item.category === 'รายรับ') runningBalance += item.amount;
                     else runningBalance -= item.amount;
@@ -479,6 +478,158 @@
                                 <div className="w-full md:w-1/2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar"><table className="w-full text-sm"><thead className="sticky top-0 bg-white z-10 text-gray-500 border-b border-gray-100"><tr><th className="text-left pb-2 pl-2">รายการ</th><th className="text-right pb-2">จำนวนเงิน</th><th className="text-right pb-2 pr-2">%</th></tr></thead><tbody className="divide-y divide-gray-50">{data.map((item, idx) => (<tr key={idx} className="hover:bg-gray-50 transition-colors group"><td className="py-3 pl-2 flex items-center gap-2"><div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: colors[idx % colors.length]}}></div><span className="text-gray-700 font-medium truncate" title={item.name}>{item.name}</span></td><td className="py-3 text-right text-gray-600">{formatMoney(item.value)}</td><td className="py-3 pr-2 text-right font-semibold text-gray-800">{((item.value / (total || 1)) * 100).toFixed(1)}%</td></tr>))}</tbody></table></div>
                             </div>
                         </div>
+                    </div>
+                );
+            };
+
+            // 5. Projection Detail Modal (For 2569)
+            const ProjectionDetailModal = () => {
+                if (!showProjectionModal) return null;
+                const totalExpense2569 = projection2569DataWithBalance.reduce((sum, item) => sum + item.estimatedExpense, 0);
+                
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setShowProjectionModal(false)}>
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <div><h2 className="text-xl font-bold text-rose-700">รายละเอียดค่าใช้จ่ายปี 2569 (โดยประมาณ)</h2><p className="text-gray-500 text-sm mt-1">ยอดรวมทั้งหมด: <span className="font-semibold text-gray-800">{formatMoney(totalExpense2569)}</span></p></div>
+                                <button onClick={() => setShowProjectionModal(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors"><XIcon size={24} className="text-gray-500" /></button>
+                            </div>
+                            <div className="p-6 flex flex-col md:flex-row gap-8 overflow-y-auto">
+                                {/* Left: Pie Chart */}
+                                <div className="w-full md:w-1/2 h-80 min-h-[300px] flex items-center justify-center relative">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie data={projection2569Details} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={2} dataKey="value">
+                                                {projection2569Details.map((entry, index) => (<Cell key={`cell-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />))}
+                                            </Pie>
+                                            <Tooltip formatter={(val) => formatMoney(val)} contentStyle={{ borderRadius: '8px' }} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><div className="text-center"><p className="text-sm text-gray-400">Total</p><p className="text-lg font-bold text-rose-600">{formatMoney(totalExpense2569)}</p></div></div>
+                                </div>
+                                {/* Right: Detailed List */}
+                                <div className="w-full md:w-1/2 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                                    <table className="w-full text-sm">
+                                        <thead className="sticky top-0 bg-white z-10 text-gray-500 border-b border-gray-100">
+                                            <tr><th className="text-left pb-2 pl-2">รายการค่าใช้จ่าย</th><th className="text-right pb-2">จำนวนเงิน (ปี)</th></tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {projection2569Details.map((item, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50 transition-colors group">
+                                                    <td className="py-3 pl-2 flex items-center gap-2">
+                                                        <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS_EXPENSE[idx % COLORS_EXPENSE.length]}}></div>
+                                                        <span className="text-gray-700 font-medium truncate" title={item.name}>{item.name}</span>
+                                                    </td>
+                                                    <td className="py-3 text-right text-gray-600">{formatMoney(item.value)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // 4. Render Projection 2569 Tab
+            const renderProjection2569 = () => {
+                const totalExpense = projection2569DataWithBalance.reduce((sum, item) => sum + item.estimatedExpense, 0);
+                const finalBalance = projection2569DataWithBalance[projection2569DataWithBalance.length - 1].remainingBalance;
+
+                // Values for Cards (Dynamic or Default)
+                const displayBalance = activeProjectionData ? activeProjectionData.remainingBalance : finalBalance;
+                const displayExpense = activeProjectionData ? activeProjectionData.estimatedExpense : totalExpense;
+                const displayMonth = activeProjectionData ? activeProjectionData.month : 'สิ้นปี 2569';
+                const expenseLabel = activeProjectionData ? `ค่าใช้จ่ายประจำเดือน ${activeProjectionData.month}` : 'รวมค่าใช้จ่ายทั้งปี 2569';
+
+                return (
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-indigo-500">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">ยอดเงินฝากคงเหลือ</p>
+                                        <div className="flex items-end gap-2">
+                                            <h2 className="text-2xl font-bold text-gray-800">{formatMoney(displayBalance)}</h2>
+                                            <span className="text-xs text-gray-400 mb-1">({displayMonth})</span>
+                                        </div>
+                                        <p className="text-xs text-indigo-600 mt-2">คำนวณจากยอดตั้งต้น 2,468,801.97</p>
+                                    </div>
+                                    <div className="p-3 bg-indigo-100 rounded-full text-indigo-600"><Calculator size={24} /></div>
+                                </div>
+                            </div>
+                            <div 
+                                className="bg-white rounded-xl p-6 shadow-sm border-l-4 border-rose-500 cursor-pointer hover:shadow-md transition-all hover:-translate-y-1 relative group"
+                                onClick={() => !activeProjectionData && setShowProjectionModal(true)} // Only open modal if not interacting with chart specific month (optional UX choice, but usually good)
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">{expenseLabel}</p>
+                                        <h2 className="text-2xl font-bold text-gray-800">{formatMoney(displayExpense)}</h2>
+                                        {!activeProjectionData && (
+                                            <p className="text-xs text-rose-600 mt-2 flex items-center gap-1">
+                                                <ZoomIn size={12}/> คลิกเพื่อดูรายละเอียดรายปี
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="p-3 bg-rose-100 rounded-full text-rose-600"><TrendingDown size={24} /></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Projection Chart */}
+                        <div className="bg-white p-6 rounded-xl shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-6">กราฟแสดงประมาณการค่าใช้จ่ายและเงินฝากคงเหลือ ปี 2569</h3>
+                            <div className="h-96 w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <ComposedChart 
+                                        data={projection2569DataWithBalance} 
+                                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                        onMouseMove={handleProjectionChartMove}
+                                        onMouseLeave={handleProjectionChartLeave}
+                                        onClick={handleProjectionChartMove}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                                        <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                                        <YAxis yAxisId="left" axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} />
+                                        <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tickFormatter={(val) => `฿${val/1000}k`} />
+                                        <Tooltip formatter={(value) => formatMoney(value)} contentStyle={{ borderRadius: '8px' }} />
+                                        <Legend />
+                                        <Bar yAxisId="left" dataKey="estimatedExpense" name="ค่าใช้จ่ายรายเดือน" fill="#f87171" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                                        <Line yAxisId="right" type="monotone" dataKey="remainingBalance" name="เงินฝากคงเหลือสะสม" stroke="#4f46e5" strokeWidth={3} dot={{r:4}} />
+                                    </ComposedChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        {/* Projection Table */}
+                        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                                <h3 className="text-lg font-semibold text-gray-800">ตารางประมาณการรายเดือน ปี 2569</h3>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm text-gray-600">
+                                    <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10">
+                                        <tr>
+                                            <th className="px-6 py-3">เดือน</th>
+                                            <th className="px-6 py-3 text-right text-red-600">ประมาณการรายจ่าย</th>
+                                            <th className="px-6 py-3 text-right text-indigo-600">เงินฝากคงเหลือสะสม</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {projection2569DataWithBalance.map((item, idx) => (
+                                            <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-3 font-medium">{item.month}</td>
+                                                <td className="px-6 py-3 text-right font-medium text-red-600">{formatMoney(item.estimatedExpense)}</td>
+                                                <td className="px-6 py-3 text-right font-bold text-indigo-600">{formatMoney(item.remainingBalance)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <ProjectionDetailModal />
                     </div>
                 );
             };
