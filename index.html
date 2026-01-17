@@ -9,13 +9,13 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- 2. Prop-types -->
+    <!-- 2. Prop-types (Important dependency for Recharts) -->
     <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
     
-    <!-- 3. Recharts -->
+    <!-- 3. Recharts (Specific Stable Version) -->
     <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
     
-    <!-- 4. Babel -->
+    <!-- 4. Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <!-- 5. Tailwind CSS -->
@@ -66,6 +66,8 @@
         const Coins = (props) => <Icon {...props}><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></Icon>;
         const Calculator = (props) => <Icon {...props}><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></Icon>;
         const Eye = (props) => <Icon {...props}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></Icon>;
+        const Sliders = (props) => <Icon {...props}><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/></Icon>;
+
 
         // --- CONSTANTS ---
         const INITIAL_BALANCE_2568 = 2043315.93;
@@ -112,7 +114,7 @@
             { category: 'รายรับ', detail: 'ดอกผลสลาก ธอส.', month: 'ม.ค.', amount: 1000.00 },
 
             // --- รายจ่าย 2568 (New Full Set) ---
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ม.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ม.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ม.ค.', amount: 4500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ม.ค.', amount: 1578.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ม.ค.', amount: 2394.71 },
@@ -123,7 +125,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'ม.ค.', amount: 280.37 },
             { category: 'รายจ่าย', detail: 'ค่าแตะเอียพนักงาน', month: 'ม.ค.', amount: 75870.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.พ.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ก.พ.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.พ.', amount: 3000.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.พ.', amount: 1313.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.พ.', amount: 833.05 },
@@ -135,7 +137,7 @@
             { category: 'รายจ่าย', detail: 'ค่าเงินเกษียณอายุ', month: 'ก.พ.', amount: 690868.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'ก.พ.', amount: 3220.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มี.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'มี.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มี.ค.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มี.ค.', amount: 1350.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มี.ค.', amount: 1109.08 },
@@ -147,7 +149,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'มี.ค.', amount: 1075.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'มี.ค.', amount: 1827.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'เม.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'เม.ย.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'เม.ย.', amount: 2064.48 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'เม.ย.', amount: 495.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'เม.ย.', amount: 1235.88 },
@@ -157,7 +159,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'เม.ย.', amount: 1400.37 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'เม.ย.', amount: 785.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'พ.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'พ.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'พ.ค.', amount: 1561.76 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'พ.ค.', amount: 622.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'พ.ค.', amount: 1074.08 },
@@ -166,7 +168,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษี', month: 'พ.ค.', amount: 32930.00 },
             { category: 'รายจ่าย', detail: 'ค่าใช้จ่ายเบ็ดเตล็ด', month: 'พ.ค.', amount: 10403.87 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'มิ.ย.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'มิ.ย.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'มิ.ย.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'มิ.ย.', amount: 1831.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'มิ.ย.', amount: 5497.71 },
@@ -179,7 +181,7 @@
             { category: 'รายจ่าย', detail: 'ค่าภาษีที่ดิน', month: 'มิ.ย.', amount: 14876.46 },
             { category: 'รายจ่าย', detail: 'ค่าผู้ตรวจสอบบัญชี', month: 'มิ.ย.', amount: 19000.00 },
 
-            { category: 'รายจ่าย', detail: 'เงินเดือน', month: 'ก.ค.', amount: 75870.00 },
+            { category: 'รายจ่าย', detail: 'ค่าเงินเดือน', month: 'ก.ค.', amount: 75870.00 },
             { category: 'รายจ่าย', detail: 'ค่าประกันสังคม', month: 'ก.ค.', amount: 1500.00 },
             { category: 'รายจ่าย', detail: 'ค่าพาหนะ', month: 'ก.ค.', amount: 1060.00 },
             { category: 'รายจ่าย', detail: 'ค่าสาธารณูปโภค', month: 'ก.ค.', amount: 4712.97 },
@@ -250,7 +252,7 @@
             { month: 'ม.ค.', ktb: 1308737.41, ghb: 718891.64, baac: 68014.94, lottery: 10000000 },
             { month: 'ก.พ.', ktb: 524909.41, ghb: 719891.64, baac: 68014.94, lottery: 10000000 },
             { month: 'มี.ค.', ktb: 295923.78, ghb: 720891.64, baac: 68165.77, lottery: 10000000 },
-            { month: 'เม.ย.', ktb: 295923.78, ghb: 721891.64, baac: 68165.77, lottery: 10000000 },
+            { month: 'เม.ย.', ktb: 295923.78, ghb: 721891.64, baac: 68165.77, lottery: 10000000 }, // Updated baac
             { month: 'พ.ค.', ktb: 663085.89, ghb: 2891.64, baac: 68165.77, lottery: 10000000 },
             { month: 'มิ.ย.', ktb: 1879816.76, ghb: 5817.50, baac: 63165.77, lottery: 10000000 },
             { month: 'ก.ค.', ktb: 2513726.76, ghb: 6817.50, baac: 63165.77, lottery: 10000000 },
@@ -318,6 +320,7 @@
 
         const App = () => {
             const [currentTab, setCurrentTab] = useState('dashboard');
+            const [showFilters, setShowFilters] = useState(false); // New state for toggling filters
             
             // --- Income/Expense Logic ---
             const [selectedCategory, setSelectedCategory] = useState('all');
@@ -644,41 +647,48 @@
                                 <div onClick={() => handleCardClick('all')} className={`cursor-pointer bg-white rounded-xl p-6 shadow-sm border-l-4 transform transition-all hover:shadow-md hover:-translate-y-1 ${currentTotals.balance >= 0 ? 'border-blue-500' : 'border-orange-500'} ${selectedCategory === 'all' ? 'ring-2 ring-blue-200' : ''}`}><div className="flex items-center justify-between"><div><p className="text-sm text-gray-500 mb-1">คงเหลือสุทธิ (รวมยกมา)</p><h2 className={`text-2xl font-bold ${currentTotals.balance + INITIAL_BALANCE_2568 >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>{formatMoney(currentTotals.balance + INITIAL_BALANCE_2568)}</h2><span className="text-xs text-gray-400 flex items-center gap-1 mt-1"><MousePointerClick size={12}/> คลิกเพื่อดูภาพรวม</span></div><div className={`p-3 rounded-full ${currentTotals.balance + INITIAL_BALANCE_2568 >= 0 ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}><Wallet size={24} /></div></div></div>
                             </div>
 
-                            {/* Filter Section */}
-                            <div className="bg-white rounded-xl shadow-sm p-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><Filter size={20} /> ตัวกรองรายละเอียด</h3>
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    <div className={`${selectedCategory === 'expense' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-green-600 font-medium">หมวดรายรับ</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายรับ', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายรับ', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.income.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
-                                    <div className={`${selectedCategory === 'income' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-red-600 font-medium">หมวดรายจ่าย</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายจ่าย', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายจ่าย', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.expense.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
+                            {/* Filter Section (Collapsible) */}
+                            <div className="bg-white rounded-xl shadow-sm p-6 relative">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2"><Filter size={20} /> ตัวกรองรายละเอียด {selectedCategory !== 'all' && (<span className="text-sm font-normal text-gray-500 ml-2 bg-gray-100 px-2 py-1 rounded">โหมดแสดงผล: {selectedCategory === 'income' ? 'รายรับ' : 'รายจ่าย'}</span>)}</h3>
+                                    <button onClick={() => setShowFilters(!showFilters)} className="text-sm text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"><Sliders size={16}/> {showFilters ? 'ซ่อนตัวกรอง' : 'แสดงตัวกรอง'}</button>
                                 </div>
+                                {showFilters && (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in slide-in-from-top-2 duration-300">
+                                        <div className={`${selectedCategory === 'expense' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-green-600 font-medium">หมวดรายรับ</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายรับ', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายรับ', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.income.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
+                                        <div className={`${selectedCategory === 'income' ? 'opacity-60' : ''} transition-opacity`}><div className="flex justify-between items-center mb-2"><h4 className="text-red-600 font-medium">หมวดรายจ่าย</h4><div className="text-xs gap-2 flex"><button onClick={() => toggleAll('รายจ่าย', true)} className="text-blue-600 hover:underline">เลือกทั้งหมด</button><button onClick={() => toggleAll('รายจ่าย', false)} className="text-gray-500 hover:underline">ล้าง</button></div></div><div className="flex flex-wrap gap-2">{uniqueDetails.expense.map(d => <button key={d} onClick={() => toggleDetail(d)} className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border ${activeDetails.includes(d) ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-gray-400'}`}>{activeDetails.includes(d) ? <CheckSquare size={12}/> : <Square size={12}/>}{d}</button>)}</div></div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Charts */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm flex flex-col">
-                                    <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+                            {/* Charts - Stack on mobile, side-by-side on desktop */}
+                            <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-xl shadow-sm flex flex-col">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                                         <h3 className="text-lg font-semibold text-gray-800">เปรียบเทียบรายรับ-รายจ่าย</h3>
-                                        <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
-                                            {/* Chart View Mode */}
-                                            <div className="flex bg-gray-100 p-1 rounded-lg">
-                                                <button onClick={() => setChartType('bar')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='bar'?'bg-white shadow-sm':'text-gray-500'}`}>แท่ง</button>
-                                                <button onClick={() => setChartType('line')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='line'?'bg-white shadow-sm':'text-gray-500'}`}>เส้น</button>
-                                                <button onClick={() => setChartType('area')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='area'?'bg-white shadow-sm':'text-gray-500'}`}>พื้นที่</button>
-                                                <button onClick={() => setChartType('composed')} className={`px-3 py-1.5 rounded-md text-sm ${chartType==='composed'?'bg-white shadow-sm':'text-gray-500'}`}>ผสม</button>
-                                            </div>
-                                            {/* Chart Filter Buttons */}
-                                            <div className="flex bg-blue-50 p-1 rounded-lg border border-blue-100">
-                                                <button onClick={() => handleCardClick('all')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='all'?'bg-blue-600 text-white shadow-sm':'text-blue-600 hover:bg-blue-100'}`}>ทั้งหมด</button>
-                                                <button onClick={() => handleCardClick('income')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='income'?'bg-green-500 text-white shadow-sm':'text-green-600 hover:bg-green-100'}`}>รายรับ</button>
-                                                <button onClick={() => handleCardClick('expense')} className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCategory==='expense'?'bg-red-500 text-white shadow-sm':'text-red-600 hover:bg-red-100'}`}>รายจ่าย</button>
+                                        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                                            {/* Chart View Mode - Scrollable on mobile */}
+                                            <div className="flex bg-gray-100 p-1 rounded-lg overflow-x-auto flex-nowrap max-w-full">
+                                                <button onClick={() => setChartType('bar')} className={`px-3 py-1.5 rounded-md text-xs sm:text-sm whitespace-nowrap ${chartType==='bar'?'bg-white shadow-sm':'text-gray-500'}`}>แท่ง</button>
+                                                <button onClick={() => setChartType('line')} className={`px-3 py-1.5 rounded-md text-xs sm:text-sm whitespace-nowrap ${chartType==='line'?'bg-white shadow-sm':'text-gray-500'}`}>เส้น</button>
+                                                <button onClick={() => setChartType('area')} className={`px-3 py-1.5 rounded-md text-xs sm:text-sm whitespace-nowrap ${chartType==='area'?'bg-white shadow-sm':'text-gray-500'}`}>พื้นที่</button>
+                                                <button onClick={() => setChartType('composed')} className={`px-3 py-1.5 rounded-md text-xs sm:text-sm whitespace-nowrap ${chartType==='composed'?'bg-white shadow-sm':'text-gray-500'}`}>ผสม</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="h-80 w-full flex-grow"><ResponsiveContainer width="100%" height="100%">{renderMainChart()}</ResponsiveContainer></div>
+                                    
+                                    {/* Chart Filter Buttons - Full width on mobile */}
+                                    <div className="flex bg-blue-50 p-1 rounded-lg border border-blue-100 mb-4 self-end sm:self-auto w-full sm:w-auto justify-center sm:justify-start">
+                                        <button onClick={() => handleCardClick('all')} className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium ${selectedCategory==='all'?'bg-blue-600 text-white shadow-sm':'text-blue-600 hover:bg-blue-100'}`}>ทั้งหมด</button>
+                                        <button onClick={() => handleCardClick('income')} className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium ${selectedCategory==='income'?'bg-green-500 text-white shadow-sm':'text-green-600 hover:bg-green-100'}`}>รายรับ</button>
+                                        <button onClick={() => handleCardClick('expense')} className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium ${selectedCategory==='expense'?'bg-red-500 text-white shadow-sm':'text-red-600 hover:bg-red-100'}`}>รายจ่าย</button>
+                                    </div>
+
+                                    <div className="h-64 sm:h-80 w-full flex-grow"><ResponsiveContainer width="100%" height="100%">{renderMainChart()}</ResponsiveContainer></div>
                                 </div>
                                 <div className="flex flex-col gap-6">
-                                    {(selectedCategory === 'all' || selectedCategory === 'income') && <div className="bg-white p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-green-100 border border-transparent" onClick={() => setExpandedChart('income')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายรับ</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.income} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.income.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_INCOME[index % COLORS_INCOME.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
-                                    {(selectedCategory === 'all' || selectedCategory === 'expense') && <div className="bg-white p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-red-100 border border-transparent" onClick={() => setExpandedChart('expense')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายจ่าย</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.expense} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.expense.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
+                                    {(selectedCategory === 'all' || selectedCategory === 'income') && <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-green-100 border border-transparent" onClick={() => setExpandedChart('income')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายรับ</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.income} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.income.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_INCOME[index % COLORS_INCOME.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
+                                    {(selectedCategory === 'all' || selectedCategory === 'expense') && <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm flex-1 cursor-pointer hover:border-red-100 border border-transparent" onClick={() => setExpandedChart('expense')}><div className="flex justify-between mb-2"><h3 className="text-sm font-semibold text-gray-600">สัดส่วนรายจ่าย</h3><ZoomIn size={16} className="text-gray-400"/></div><div className="h-40"><ResponsiveContainer><PieChart><Pie data={detailBreakdown.expense} cx="50%" cy="50%" innerRadius={40} outerRadius={60} dataKey="value">{detailBreakdown.expense.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS_EXPENSE[index % COLORS_EXPENSE.length]} />)}</Pie></PieChart></ResponsiveContainer></div></div>}
                                 </div>
                             </div>
 
@@ -686,7 +696,7 @@
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center"><h3 className="text-lg font-semibold text-gray-800">รายการข้อมูล (Filtered Data)</h3><span className="text-sm text-gray-500">{tableDataWithBalance.length} รายการ</span></div>
                                 <div className="overflow-x-auto max-h-96">
-                                    <table className="w-full text-left text-sm text-gray-600">
+                                    <table className="w-full text-left text-sm text-gray-600 min-w-[600px]"> {/* Added min-w to force scroll on small screens */}
                                         <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10"><tr><th className="px-6 py-3">เดือน</th><th className="px-6 py-3">หมวด</th><th className="px-6 py-3">รายละเอียด</th><th className="px-6 py-3 text-right text-green-700">รายรับ</th><th className="px-6 py-3 text-right text-red-700">รายจ่าย</th><th className="px-6 py-3 text-right text-blue-800">คงเหลือสะสม</th></tr></thead>
                                         <tbody className="divide-y divide-gray-100">
                                             {tableDataWithBalance.length > 0 ? tableDataWithBalance.map((item, idx) => (
@@ -739,7 +749,7 @@
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center"><h3 className="text-lg font-semibold text-gray-800">ตารางยอดเงินฝากรายเดือน</h3></div>
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-left text-sm text-gray-600">
+                                    <table className="w-full text-left text-sm text-gray-600 min-w-[600px]">
                                         <thead className="bg-gray-100 text-gray-700 font-semibold sticky top-0 z-10"><tr><th className="px-6 py-3">เดือน</th><th className="px-6 py-3 text-right text-blue-600">กรุงไทย</th><th className="px-6 py-3 text-right text-orange-600">ธอส.</th><th className="px-6 py-3 text-right text-lime-600">ธกส.</th><th className="px-6 py-3 text-right text-purple-600">สลากออมสิน</th><th className="px-6 py-3 text-right text-gray-800 font-bold">รวม (หมุนเวียน)</th></tr></thead>
                                         <tbody className="divide-y divide-gray-100">{bankData.map((item, idx) => (<tr key={idx} className="hover:bg-gray-50 transition-colors"><td className="px-6 py-3 font-medium">{item.month}</td><td className="px-6 py-3 text-right">{formatMoney(item.ktb)}</td><td className="px-6 py-3 text-right">{formatMoney(item.ghb)}</td><td className="px-6 py-3 text-right">{formatMoney(item.baac)}</td><td className="px-6 py-3 text-right">{formatMoney(item.lottery)}</td><td className="px-6 py-3 text-right font-bold text-gray-800">{formatMoney(item.ktb+item.ghb+item.baac)}</td></tr>))}</tbody>
                                     </table>
